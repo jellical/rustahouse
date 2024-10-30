@@ -1,13 +1,18 @@
+mod db;
 
+use crate::db::diesel::establish_connection;
+use crate::db::models::users::User;
 use axum::{
-    routing::{get, post},
     http::StatusCode,
+    routing::{get, post},
     Json, Router,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 #[tokio::main]
 async fn main() {
+    let _connection = &mut establish_connection();
+
     // initialize tracing
     tracing_subscriber::fmt::init();
 
@@ -30,30 +35,21 @@ async fn root() -> &'static str {
 }
 
 async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
     Json(payload): Json<CreateUser>,
 ) -> (StatusCode, Json<User>) {
-    // insert your application logic here
     let user = User {
-        id: 1337,
-        username: payload.username,
+        id: "1337".to_string(),
+        email: payload.email,
+        first_name: Option::from("name".to_string()),
+        last_name: Option::from("lastName".to_string()),
     };
 
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
     (StatusCode::CREATED, Json(user))
 }
 
 // the input to our `create_user` handler
 #[derive(Deserialize)]
 struct CreateUser {
-    username: String,
+    email: String,
 }
 
-// the output to our `create_user` handler
-#[derive(Serialize)]
-struct User {
-    id: u64,
-    username: String,
-}

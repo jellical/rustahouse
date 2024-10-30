@@ -8,4 +8,4 @@ services:
       - POSTGRES_USER=rustahouse
       - POSTGRES_PASSWORD=rustahouse
     ports:
-      - "5435:5432"
+      - "5432:5432"
